@@ -1,0 +1,437 @@
+----------------------- LEZIONE 1 - 25/09/2023 -----------------------
+
+Milioni di sistemi interconnessi: 
+- hosts: Ospitano qualcosa, app oppure siti che vanno in rete
+- endpoints/the “Edge”: calcolatore che si affaccia alla rete
+
+Una ragnatela di collegamenti (link):
+- Link point-to-point: due estremità ben definite
+- Link broadcast: molteplicità di stazioni che "parlano" e molteplicità di stazioni che "ascoltano". Popolazione di endpoint che usa lo stesso point contemporaneamente.
+- fibra, rame, radio, satellite
+- Velocità di trasmissione (banda, bit/s); Throughput: velocità reale della connessione
+
+Router: instradano/smistano i pacchetti (blocchi di dati): the “Core”. Veicola pacchetti da un mittente specifico ad un destinatario specifico
+Il Router ha due link: uno che serve per comunicare con la centrale interna (link interno), l'altro serve per comunicare con il resto (link esterno)
+
+Esistono due tipo di comunicazioni: a commutazione di pacchetto e commutazione di circuito
+- Commutazione di pacchetto: si comunica trasmettendo un piccolo pacchetto e lo si manda a qualcun altro
+- Commutazione di circuito: 8
+Il riassemblaggio dei dati lo esegue l'host.
+
+----------------------- LEZIONE 2 - 26/09/2023 -----------------------
+
+// Tecnologie mobile: i telefoni si collegano ad una stazione radiobase.
+// Il doppino telefonico funge anche da Applink nel caso di fibra misto rame (WDSL). L'applink vero e proprio viene sfrutta con la fibra pura.
+ 
+Router domestico (funzioni):
+    1) Collegamento verso la centrale. 
+    2) Smista i pacchetti dall'esterno all'interno e viceversa. 
+    3) Accesspoint, per ricevere e mandare dati in wireless.
+
+Routing: algoritmo che prende i pacchetti in entrata e li smista in uscita
+
+Un protocollo è un "documento" che serve a dare delle regole alle macchine nella comunicazione web. La maggior parte dei protocolli sono definiti.
+I protocolli specificano le modalità di invio e ricezione dei pacchetti (TCP, IP, HTTP, FTP, PPP) in documenti pubblici.
+Ci sono diverse famiglie:
+- RFC (request for comment) con righe da 1 a +infinito (Http è definito su RFC). 
+  Le RFC sono scritte da IETF (Internet Engineering Task Force - Huawei, Cisco, Google ecc) e anche da W3C (WWW Consortium).
+- Protocolli proprietari, quindi chiusi (Skype o Microsoft Teams).
+
+Sistema autonomo: rete molto grande (copre una regione o nazione intera). Esistono vari sistemi autonomi interconnessi. Per esempio la 
+rete GARR (Gruppo per l'Armonizzazione della Rete della Ricerca, il primo nodo della GARR è nato a Pisa). La Tim ha un altro sistema autonomo, quindi per comunicare anche 
+da Tim a GARR bisogna sempre usare un NAP. (sono scemi, usarne una unica è troppo da ritardati)
+Per comunicare con altri sistemi autonomi bisogna attraversare le NAP (Network access point)
+
+Stack ISO/OSI e (TCP+UDP)/IP
+IP: lo standard che definisce com'è fatto il pacchetto. A sua volta l'IP è divisa per strati, il quale implementa un servizio tramite
+    nuove funzionalità e basandosi sui servizi forniti dallo strato inferiore.    
+
+Stack ISO/OSI:
+7) Application 6) Presentation 5) Session 4) Transport 3) Network 2) Datalink 1) Physical
+
+(Solitamente i primi tre strati sono gestiti dal Router)
+
+Stack (TCP+UDP)/IP:
+4) Application 3) Transport 2) Internet 1) Link
+
+Le reti funzionano tramite chiamate di liberia. Ogni strato ha un software all'interno il quale ad ogni chiamata crea un interfaccia con lo strato superiore
+per comunicare con lo strato inferiore che servirà ad eseguire il suo lavoro. (Da rivedere)
+
+Stack di protocolli di Internet:
+- Applicazione: FTP, SMTP, HTTP
+- Transporto: TCP, UDP
+- Network: Sistema di instradamento dei datagrammi (IP, Protocolli di routing)
+- Link: servizi di trasmissione tra host fisicamente adiacenti ovvero trasmissione diretta
+    1) PPP (PPPoE, PPPoA)
+    2) Ethernet, Wifi, HSDPA, LTE, 5G
+
+----------------------- LEZIONE 3 - 02/10/2023 -----------------------
+
+NIC -> Network Interface Card (scheda di rete). Ricevono e trasmettono su uno specifico link
+Dispositivi Layer 2: Capaci solo di lavorare al livello 2 (Link)
+Dispositivi Layer 3: Hanno tutto ciò che serve a gestire un Link e tutto ciò che serve a gestire il livello 3
+Dispositivi full Stack: implementano tutto, quindi livello 2,3,4 e a volte hanno anche app all'interno
+ 
+(Il link serve per la comunicazione // da finire)
+Dispositivo L2 (es Switch) -> ha due buffer: uno di recezione (quello che arriva dall'esterno) e uno di trasmissione (ciò che siamo noi a mandare) su uno 
+specifico link. Lo Switch per esempio implementa tanti tipi di L2 diversi in base al numero di porte che ha. Bisgona specificare se la porta è ottica o rame o altro.
+
+Dispositivo L3 (solitamente un router): sfrutta dei link per ricevere e trasmettere, qui non bisogna specifica che tipo di porta si ha perchè lo sa già all'interno
+Il router contiene un certo numero di interfacce, il quale contiene l'hardware necessario a sfruttare L2, contiene anche delle API che servono per la trasmissione
+dai pacchetti. Arriva un pacchetto da un certo link, lo scompatta, consulta la tabella delle Rotte per sapere cosa bisogna fare col pacchetto. Nel pacchetto troviamo
+il datagramma, che contiene per il MAC destinatario e sorgente della scheda di rete (a volte anche gli ip). (Inoltre il router ogni tanto svuota il buffer di recezione). I router possono anche avere
+del Firewall all'interno e quindi decidere di droppare il pacchetto. 
+Col protocollo UDP può capitare che si perda qualche pacchetto o datagramma.
+
+Quindi il L4 ha due funzioni: la prima è quella di identificare il processo che deve ricevere il datagramma, la seconda è quella di identificare il processo
+che deve ricevere il datagramma. (Porta di destinazione e porta di sorgente)
+Il L4 serve solitamente solo agli endpoint, nel router non è presente(salvo eccezioni). Questo perchè gli endpoint servono per una comunicazione punto-punto.
+
+Gli endpoint hanno almeno una interfaccia (solitamente molte di più). All'interno dell'endpoint troviamo anche L2 con uno o più link. Nell'endpoint arrivano 
+anche datagrammi. Nell'endpoint il datagramma può essere anche creato, mentre nel router arrivano ma mai creati. Troviamo una routing table che ha come
+obiettivo di scegliere il migliore link di uscita e di pre-elaborare i datagrammi in entrata.
+
+Multiplex e Demultiplex: Servono a capire dove i datagrammi devono andare (L4)
+I numeri di porta servono a far capire in quale i buffer dovranno essere poggiati i datagrammi.
+
+Listening socket: punto di ascolto dove si attende l'arrivo di nuove telefonate. Solitamente la porta su cui si comunica è aperta.
+Porta 80 HTTP - Porta 40 HTTPS 
+
+Ogni nodo di internet può avere più identità (IP)
+Le schede di rete hanno un indirizzo fisico chiamato MAC (Media Access Control) che è univoco (48 bit) e serve ad identificare la scheda di rete in modo univoco.
+Il MAC è scritto in esadecimale e viene scritto in questo modo: 00:00:00:00:00:00
+Ipconfig su Windows e ifconfig su Linux. Servono a vedere le informazioni della scheda di rete.
+
+Il livello trasporto deve decidere che link usare e predisporre il dato per mandarlo sul web.
+Socket è un'astrazione che serve per far comunicare i processi tra loro (a L4). All'interno ci si scrive il messaggio che si vuole mandare.
+
+Incapsulamento: è il processo di aggiunta di un header (o trailer) ai dati provenienti dal livello superiore (matriosca).
+Il messaggio viene incapsulato in un segmento, il quale contiene il l'header (intestazione). che contiene la porta di destinazione e la porta di sorgente.
+A sua volta il segmento viene incapsulato nel datagramma che contiene l'indirizzo IP del mittente e del destinatario. A sua volta il datagramma viene incapsulato 
+in un frame (formato richiesto dal link), il quale contiene l'indirizzo MAC del mittente e del destinatario. Il frame sarà ciò che arriverà nel buffer di recezione
+del link. Successivamente il frame viene elaborato dallo strato superiore. Arriverà allo switch che lo manderà al router, il router lo tramite al datagramma lo smista
+e infine diventa segnale elettrico o luce.
+
+Quando un link è molti a molti bisogna specificare l'indirizzo MAC del mittente e del destinatario. (Il MAC è univoco e non cambia mai, l'IP invece può cambiare)
+Decapsulamento: è il processo di rimozione di un header (o trailer) dai dati provenienti dal livello inferiore.
+
+----------------------- LEZIONE 4 - 03/10/2023 -----------------------
+
+// Spiegazione su come usare Wireshark
+// 1) SYN 2) SYN-ACK 3) testo della get 4) contenuto della risorsa
+
+Programmazione dei Socket
+
+------------------------ LEZIONE 5 - 09/10/2023 -----------------------
+
+LIVELLO 7: Applicazione
+Applicazione di rete: è un programma che gira su un host e che sfrutta la rete per comunicare con un altro programma che gira su un altro host.
+- Girano su piattaforme differenti
+- Comunicano attraverso la rete
+- es Web: un software server che comunica con i browser
+I router intermedi fanno solo da tramite e ingnorano il reale contenuto dei pacchetti.
+
+Applicazioni distribuite: Web, emails, giochi, file sharing, streaming, ecc
+
+Due principlai servizi: 
+- UDP: nessuna affidabilità (stile piccione viaggiatore)
+- TCP: massima affidabilità, controllo di flusso, controllo di congestione
+
+Tipi di architetture L7:
+- Client-Server: un server che fornisce un servizio e un client che lo usa
+    Server: sempre acceso, IP e porta statici, possibilità di avere "batterie di server"
+    Client: comunicano col sever, si connettono ad intermittenza, IP e porta dinamici, non comunicano fra loro direttamente. Hanno un ciclo
+            di vita occasionale (no regole sugli IP)
+    Batterie di server: un server che si occupa di gestire le richieste e altri server che si occupano di gestire i dati nel caso in cui ce ne fosse bisogno.
+    Cluster: un insieme di server. (es Facebook)
+    Contend Delivery Network: (CDN) un gruppo di server (visto come uno solo) che distribuisce contenuti a molteplici client. Per esempio Facebook ha più server 
+                              in base a dove si fa la richiesta. Per esempio se la farò dall'Italia, mi risponderà il server più vicino a quella posizione. 
+                              Nonostante ciò l'URL sarà sempre lo stesso.  
+- Peer-to-Peer (P2P): non c'è un server, ma tutti i nodi sono uguali e si scambiano dati tra loro. Quindi tutti occasionalmente possono essere sia Client che Server.
+                      Qui i Peer possno anche cambiare IP. (es rete KAD). E' un architettura molto scalabile, ma ha numerosi problemi tecnici non ancora risolti.
+                      Necessità un bootstrap (che fornisce l'elenco degli altri peer). Attualmente è difficile trovare una connessione P2P pura.
+- Ibride (P2P + Client-Server): 
+    Napster / Kad + eDonkey: il trasferimento dei file era P2P, la ricerca dei file invece erqa centralizzata: i peer registravano i nomi dei file sul server centrale
+                             oppure potevano interrogare il server centrale.
+
+    // da dinire
+
+// Protocollo SSH: server per accedere da remoto ad un terminale.
+Streaming in differita: ci si connette al server per guardare un contenuto pre-registrato. (es Netflix, Youtube, Disney+ ecc)
+Streaming in real time: ci si connette al server per guardare un contenuto live. (es Rojadirecta (LOL))
+
+Regole di TCP (IP e UDP):
+- Ogni host possiede più di una interfaccia di Rete
+- Ogni interfaccia è associata ad un diverso IP (es 160.97.47.24, 4 byte separati da punti)
+- Ogni interfaccia possiede 65535 "porte" di ingresso.
+- Spesso ad un IP è associato un nome, non è obbligatorio. (es www.mat.unical.it <-> 160.97.62.1)
+
+// FQDN (Fully Qualified Domain Name): nome di dominio unico e che specifica una posizione assoluta di un nodo nella gerarchia del DNS.
+// Porta in stato di listening: porta che sta in attesa di un pacchetto.
+
+----- PROTOCOLLO SMTP (Simple Mail Transfer Protocol) -----
+
+E' un protocolo a L7 che serve per scambiare messaggi di posta elettronica tra due host. (es Gmail, Outlook ecc). I protocolli di lettura usati sono: IMAP e POP3.
+L'infrastruttura di posta elettronica è una rete P2P.
+
+// telnet smtp.gmail.com 25 -> per connettersi al server SMTP di Gmail via shell
+
+// nslookup -> per vedere l'IP di un sito 
+// set type=MX -> per vedere il mail exchanger di un sito
+
+------------------------ LEZIONE 6 - 10/10/2023 -----------------------
+
+
+----- PROGRAMMAZIONE DEI SOCKET -----
+
+Un processo invia e riceve messaggi attraverso i suoi socket. Il socket è simile ad un ingresso/uscita verso il mondo esterno. L'invio si affida all'infrastruttura
+offerta dallo strato di trasporto.
+
+Errori Python sui Socket:
+- Unknown host: l'host non esiste (socket.gaierror: [Errno 11001] getaddrinfo failed)
+- Connect Error: Connection refused (socket.error: [Errno 10061] "Connessione rifiutata perchè il computer di destinazione ha la porta chiusa")
+- No route to Host: il router non sa come raggiungere l'host (socket.error: [Errno 10065] "Nessun percorso per l'host") Router staccato o pc staccato dalla reta (non per forza)
+- SocketTimeoutException: il server non risponde (socket.timeout: [WinError 10060] "Timeout della connessione") (il server è staccato o non risponde)
+- BindException: la porta/protocollo/indirizzo è già occupata (socket.error: [WinError 10048])
+
+
+------------------------ LEZIONE 7 - 16/10/2023 -----------------------
+
+Protocollo di comunicazione: insieme di regole che definiscono il formato e l'ordine dei messaggi scambiati tra due o più entità comunicanti, così come le azioni intraprese
+su invio o ricezione di un messaggio o di un altro evento. 
+
+// Maximum data unit: dimensione massima di un datagramma che può essere inviato su un link. (es 1500 byte)
+
+----- PROTOCOLLO SMTP -----
+
+Ciclo di vita di un mail: 
+1) Alice usa Gmail per inviare per comporre una messaggio a Bob
+2) Gmail app manda il messaggio al suo mail server; il messaggio viene messo in coda
+3) Il mail sever di Alice (nel ruolo di client) apre una connessione con il mail server di Bob (traducendo grazie al DNS il nome del server in IP)
+4) Il mail server di Alice invia il messaggio a quello di Bob tramite un connessione TCP
+5) Il mail server di Bob riceve il messaggio e lo salva nella casella di posta di Bob (solitamente i passaggi dall'1 al 5 sono quasi instantanei)
+6) Ad un certo punto Bob si connette al suo mail server e scarica il messaggio (tramite POP3 o IMAP) (questo passaggio può essere fatto anche da un altro host)
+
+IMAP (Internet Message Access Protocol): è un protocollo di posta elettronica che permette di accedere alle proprie caselle di posta elettronica in remoto ma 
+                                         senza scaricare i messaggi sul proprio computer.
+POP3 (Post Office Protocol): è un protocollo di posta elettronica che permette di accedere alle proprie caselle di posta elettronica in remoto ma scaricando i messaggi
+                             sul proprio computer.
+// Honey pot: server con una porta sempre aperta in modo da attirare gli hacker e studiarli.
+
+Come leggere la posta (come avviene):
+1) SMTP -> Mail server del mittente -> SMTP -> Mail server del destinatario -> POP3/IMAP -> User agent
+2) SMTP -> Mail server del mittente -> SMTP -> Mail server del destinatario -> POP3/IMAP -> Web server -> HTTP -> User agent
+
+MIME: protocollo che serve per allegare file ad una mail. (Multipurpose Internet Mail Extensions)
+
+Formato dei messaggi (RFC 822):
+- Header: contiene i metadati del messaggio (mittente, destinatario, oggetto, quando è stato ricevuto ecc)
+- Body: contiene il contenuto del messaggio (testo, immagini, allegati, ecc)
+
+Formato Base64: è un sistema di codifica che permette di rappresentare qualsiasi sequenza di byte (anche foto o pdf) con un insieme di 64 caratteri ASCII. 
+                Viene utilizzato per rappresentare dati binari in modo da poterli trasmettere su canali che permettono solo testo ASCII. 
+                (es: allegati di una mail)
+
+DKIM: è un protocollo che serve per verificare che il messaggio non sia stato modificato durante il trasporto. (DomainKeys Identified Mail)
+
+Triade CIA: 
+- Confidenzialità: non devono essere letti i dati durante il trasporto.
+- Integrità: non vanno modificati i dati durante il trasporto.
+- Disponibilità: garantire che i server siano sempre disponibili (anche durante attacchi DOS).
+
+- Non ripudio: garantire che il mittente non possa negare di aver inviato un messaggio.
+
+TLS: aggiunge una libreria che si chiama SSL (Secure Socket Layer) che serve per criptare i dati prima di essere inviati. (es HTTPS) 
+Protoco di Key Exchange: serve per scambiare le chiavi di criptazione in modo sicuro (es Diffie-Hellman).
+
+Auteticanzione di tipo CHAP(Challenge Handshake Authentication Protocol): è un protocollo di autenticazione che permette di verificare l'identità di un utente
+che si connette ad un server remoto. (es password) :
+1) Password = "Ciao"
+2) La password è conosciuta solo dal client e dal server
+3) Solo se si conosce la password si può accedere al server
+4) Soluzione = SHA1("Ciao" + "1235678") 
+
+SRP (Standard Remote Password): è un protocollo PAKE (Augmented Password-Authenticated Key Exchange), specificamente progettato per aggirare i brevetti esistenti.
+
+------------------------ LEZIONE 8 - 17/10/2023 -----------------------
+
+----- NAMING E DNS ----
+
+// DNS si appoggia ad UPD. Proprio per questo solitamente vengono contattati due DNS.
+
+wget: è un comando shell che permette di interagire con un server web parlando l'HTTP e di scaricarlo. (es wget www.google.it)
+curl: serve ad accedere ad un server web e scaricare il contenuto. (es curl www.google.it)
+
+/*
+La stazione FQDN contatta un DNS Resolver ed effetua delle query. Per esempio digitando www.google.it, il DNS Resolver effettua una query al DNS Root Server
+il quale risponde con l'indirizzo del DNS Top Level Domain Server (.it). Il DNS Resolver effettua una query al DNS Top Level Domain Server il quale risponde
+con l'indirizzo del DNS Authoritative Server (google.it). Il DNS Resolver effettua una query al DNS Authoritative Server il quale risponde con l'indirizzo IP
+del server web di Google. Il DNS Resolver effettua una query al server web di Google il quale risponde con il contenuto della pagina web.
+*/
+
+La stazione FQDN contatta un DNS Resolver ed effetua delle query. Per esempio digitando www.google.it, va a chiedere se esiste un IP collegato a quel nome per
+effettuare una conversazione.
+
+I DNS solitamente danno 3 risposte (Il DNS da risposte "prolisse", ovvero con molte informazioni. Questo perchè cerca di anticipare le richieste successive 
+e quindi risparmiare tempo):
+- La prima da il CNAME, ovvero il vero nome del server che stiamo contattando (es Prova)
+- da il CNAME di Prova (es Prova28)
+- da l'IP di Prova28
+
+Com'è strutturato all'interno il DNS:
+- Root Server: 13 server sparsi per il mondo che contengono l'elenco dei TLD (Top Level Domain) che contengono l'elenco dei domini di primo livello (es .it, .com ecc)
+- Authoritative Server: contengono l'elenco dei domini di secondo livello (es google.it, unical.it ecc)
+- Local DNS Resolver: è il DNS del nostro ISP (Internet Service Provider) che contiene l'elenco dei domini di terzo livello (es www.google.it, www.unical.it ecc)
+
+// Ogni ISP ha una sua cache. Se cambiamo il file di Zona, il DNS non si aggiorna subito, ma ci mette un po' di tempo che dipende dall'ISP.
+// Record ISPF: sono i record che servono per far in modo che si possa gestire lo spam.
+// vedere come ottenre in fule di zona -> %SystemRoot%\system32\Dns
+
+----- Load Balancing e DNS -----
+
+CDN: Content Distribution Network (es Cloudflare, Akamai ecc)
+Balancing via DNS -> I server DNS rispondono a rotazione con valori IP differenti
+Balancing via Anycast -> Indirizzo univoco mappato su più host (es con 8.8.8.8 risponde quello più geograficamente più vicino)
+
+----- SICUREZZA DNS -----
+
+Il DNS ha problemi di Confidenzialità, integrità e autenticità:
+- Per risolvere il problema di autenticità si usa il DNSSEC (criptato): Autenticità delle responses con firme digitali
+- Per risolvere il problema di confidenzialità si usa DNS over HTTPS/TLS: Confidenzialità di query e responses
+
+Ordine di interrogazione per un endpoint:
+1) etc/hosts file -> (su linux, simile su windows come path) si apre questo file che contiene  
+
+
+------------------------ LEZIONE 9 - 19/10/2023 -----------------------
+
+// NMAP -> per vedere le porte aperte di un host dal nostro punto di vista
+// REST: è un modo per invocare delle procedure da remoto (es GET, POST ecc)
+
+----- PROTOCOLLO HTTP (Hypertext Transfer Protocol) -----
+
+HTTP attualmente viene usato anche per lo streaming
+HTTP è il "furgone" che trasporta qualcosa, HTML invece è quello che viene trasportato (payload).
+URL (Uniform Resource Locator): è una sequenza di caratteri che identifica univocamente l'indirizzo di una risorsa in Internet, tipicamente presente su un host server.
+Cambiando da HTTP a HTTPS con lo stesso URL potrebbe cambiare il contenuto della pagina.
+es: http://www.someschool.edu/someDept/pic.gif -> protocollo://host(FQDN)/path
+
+HTTP è un protocollo stateless, ovvero non tiene traccia delle richieste precedenti. (es se si fa una richiesta GET, il server non sa che si è fatto una richiesta
+GET in precedenza). Per risolvere questo problema si usano i Cookie.
+
+User-Agent: è un campo dell'header che serve per identificare il browser che si sta usando. (es Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:69.0) 
+Gecko/20100101 Firefox/69.0). Questo campo è importante perchè il server potrebbe rispondere in modo diverso in base al browser che si sta usando.
+
+------------------------ LEZIONE 10 - 23/10/2023 -----------------------
+
+----- COOKIE -----
+
+Sessione: gruppo di conversazioni HTTP riconducibili ad un'unica attività omogenea (es login, carrello ecc). Fa da surrogato al layer di sessione ISO/OSI (L5).
+Anche altri protocolli applicativi hanno forme di "sessione" (es RTP, SIP) ma il L5 resta non standardizzato.
+
+Cookie: è un piccolo file di testo che viene salvato sul computer del client e che contiene informazioni relative alla sessione(es login, carrello ecc).I cookie inoltre 
+trasportano autorizzazioni, id carrelli della spesa, consigli per gli acquisti e stato della sessione. I cookie sono salvati nel browser. Ad ogni getperò il sito ha 
+bisogno di una copia di cookie, il quale nel tempo riempirà la ram. Per questo motivo i cookie hanno una scadenza. I cookie sono salvati in un file di testo.
+Hanno 4 componenti:
+1) // da finire
+
+// Furto di sessione: quando un hacker ruba il cookie di un utente e lo usa per accedere al suo account. FileShip :)
+
+Cookie secure: vuol dire che il cookie può essere usato solo in HTTPS.
+Cookie HttpOnly: vuol dire che il cookie non può essere stampato tramite JavaScript.
+Cookie di terze parti: sono cookie che vengono salvati da siti diversi da quello che si sta visitando (es cookie di Facebook su un sito di terze parti).
+
+RTT (Round Trip Time): è il tempo che impiega un pacchetto per andare da un host ad un altro e ritornare indietro. (es 100ms)
+1) RTT per iniziare la connessione
+2) RTT per la HTTP Request e l'arrivo dei primi byte di risposta
+3) RTT per il tempo totale della risposta
+
+HTTP 2.0 (SPDY, fatto da google) -> riduce l'HOL (Head of Line) blocking, ovvero il tempo di attesa per la risposta del server. Qui l'oggetto viene diviso in "chunck"
+in modo da evitare che un oggetto molto grande blocchi la risposta di un oggetto più piccolo.
+HTTP 3.0 (QUIC) -> UDP (grazie al quale si annulla il primo RTT), multistream over UDP (con TLS). Inoltre usando UDP si evita il problema di TCP, ovvero che
+se un pacchetto si perde, si blocca tutto il resto.
+
+Il TLS si basa sulla Key Security Concepts: Confidenzialità, Integrità e Disponibilità (CIA). Ha anche un altro strato che si occupa di autenticità degli interlocutori.
+Come viene fatto:
+1) Frammentazione del pacchetto in SSLPlaintext
+2) Compressione del pacchetto in SSLCompressed
+3) Criptazione del pacchetto in SSLCipherText:
+    1) Creazione di MAC
+    2) Inserimento del MAC nel pacchetto (SSLCompressed)
+    3) Criptazione dei pacchetti usando la chiper suite a scelta
+    4) Se un blocco è troppo piccolo, viene riempito con padding
+
+Tutto questo viene messo nel Certificato SSL, il quale contiene:
+- Nome del dominio
+- Chiave pubblica del server
+- Scadenza del certificato
+- Firma digitale del certificato
+Tutto ciò è collegata alla chiave privata del server, che è fondamentale per far capire se il certificato appartiene a quel sito. A loro volta questi certificati sono
+firmati da una CA (Certification Authority) che è un ente che si occupa di certificare i certificati. (es Verisign, Comodo, Let's Encrypt ecc)
+
+------------------------ LEZIONE 11 - 26/10/2023 -----------------------
+
+----- UDP -----
+
+Datagramma UDP contiene:
+- Porta di sorgente
+- Porta di destinazione
+- Lunghezza del datagramma (include anche la lunghezza del payload)
+- UDP Checksum (per verificare che il datagramma non sia stato modificato)
+- Payload
+
+L'UDP ha anche un meccanisco di controllo sui pacchetti corrotti (es checksum o principio delle somme di controllo). 
+Checksum in UDP: è un campo di 16 bit che serve per verificare che il datagramma non sia stato modificato. (es 0x1234)
+Si esegue la somma di controllo di tutti i byte del datagramma sia in invio che in recezione, con la differenza che in recezione si fa la NOT anche il risultato.
+Infine si fa la XOR tra quello di invio e recezione; se esce tutto 1 vuol dire che il datagramma non è corrotto.
+Il checksum viene calcolato dall'hardware scheda di rete (Checksum Offload), in modo da non appesantire il processore.
+
+Attacco Man in the Middle attivo: l'attaccante si mette in mezzo e modifica i pacchetti. (es attacco DNS poisoning)
+Attacco Man in the Middle passivo: l'attaccante si mette in mezzo e ascolta i pacchetti. (es attacco sniffing)
+E' half-duplex quando riesce solo ad ascoltare/modificare solo da un lato; è full-duplex quando riesce ad ascoltare/modificare da entrambi i lati.
+
+----- Qualità del Servizio (QoS) -----
+
+// 1 MB = 8 Mb
+
+La QoS è un insieme di tecnologie che permettono di garantire un certo livello di servizio (es banda minima garantita, ritardo massimo ecc). Le misure di qualità
+del servizio dipende sia da dove si fa e sia da quando si fa.
+Si misurano 4 valori che ci danno un'idea su "come sta" la rete.
+1) Throughput: velocità di trasmissione reale.
+2) Latenza: tempo di trasmissione di un pacchetto.
+3) Jitter: variazione del ritardo (oscillazione violenta fra i paramentri).
+4) Packet Loss: perdita di pacchetti.
+
+/* scaricare PingPlotter
+
+Su PingPlotter abbiamo 3 grafici:
+1) Ping: mostra il ritardo di un pacchetto in funzione del tempo. 
+2) Route: mostra il percorso che fa il pacchetto per arrivare a destinazione.
+3) Network: mostra la percentuale di pacchetti persi in funzione del tempo.
+
+Abbiamo anche 8 colonne:
+1) Hop: numero di router che il pacchetto attraversa per arrivare a destinazione.
+2) IP: indirizzo IP del router.
+3) Name: nome del'host (DNS Name)
+4) Avg: tempo di risposta medio.
+5) Min: tempo di risposta minimo.
+6) Cur: tempo di risposta attuale.
+7) PL%: percentuale di pacchetti persi.
+8) Latency: ritardo del pacchetto.
+
+*/
+
+------------------------ LEZIONE 12 - 30/10/2023 -----------------------
+
+----- LATENZA (Ritardo) -----
+
+La latenza è il ritardo che c'è tra l'invio di un datagramma e la ricezione tra due endpoint. Il ritardo dipende da:
+- Elaborazione dei datagrammi (tempo in cui il modem fa get dal buffer e lo mette sulla rete).
+- Accodamento (Più il buffer è grande, più ritardo di accodamenti ci può essere. Il tempo in cui il pacchetto rimane nel buffer).
+- Ritardo trasmissivo (tempo in cui il pacchetto rimane sul link).
+- Propagazione (Quando il pacchetto si mette in viaggio e parte verso la destinazione. Tutta la strada da fare è la propragazione).
+
+----- THROUGHTPUT (Velocità) -----
+
+Throughput: flusso attuale dei dati, espresso in bit/sec o multipli.
+Banda: flusso massimo raggiungibile su un certo link (es 100 Mbps).
