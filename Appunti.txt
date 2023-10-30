@@ -435,3 +435,10 @@ La latenza è il ritardo che c'è tra l'invio di un datagramma e la ricezione tr
 
 Throughput: flusso attuale dei dati, espresso in bit/sec o multipli.
 Banda: flusso massimo raggiungibile su un certo link (es 100 Mbps).
+Affidabilità: si misura in termini di probabilità con cui un pacchetto arriverà a destinazione sulla linea che stiamo misurando. Il packet loss influenza:
+Con TCP:
+- Maggiore latenza
+- Maggiore Jitter
+- Minor throughput
+Con UDP (senza ritrasmissioni):
+- Perdita di qualità (da severa a leggera).
