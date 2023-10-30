@@ -442,3 +442,10 @@ Con TCP:
 - Minor throughput
 Con UDP (senza ritrasmissioni):
 - Perdita di qualità (da severa a leggera).
+
+Il Jitter è proporzionale alla probabilità che due pacchetti A e B giungano a destinazione fuori ordine. Può aumentare la latenza reale (TCP) e/o diminuire 
+l'affidabilità (UDP Real Time). Se il jitter è basso vuol dire che l'oscillazione è bassa e viceversa (scarto quadratico medio delle misure di latenza).
+Esempio: se abbiamo 50ms di ping ad un server ma fissa, il jitter sarà basso. Se invece abbiamo 50ms di ping ad un server ma che oscilla tra 20ms e 80ms, il jitter
+sarà alto.
+
+// In TCP l'alto jitter diventa alto ping, in UDP diventa packet loss.
