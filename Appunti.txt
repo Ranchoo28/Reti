@@ -449,3 +449,44 @@ Esempio: se abbiamo 50ms di ping ad un server ma fissa, il jitter sarà basso. S
 sarà alto.
 
 // In TCP l'alto jitter diventa alto ping, in UDP diventa packet loss.
+
+
+------------------------ LEZIONE 13 - 31/10/2023 -----------------------
+
+Applicazione             Affidabilità            Banda                         Latenza
+=============================================================================================
+File Transfer            No loss                 Elastic                       No
+Email                    No loss                 Elastic                       No
+Web                      No loss                 Elastic                       Yes
+Real-time audio/video    No loss                 Audio: 5kbps - 1Mbps          Yes, 0-100 ms
+                                                 Video: 10kbps - 5Mbps
+Stored audio/video       Loss-tolerant           Audio: 5kbps - 1Mbps          Yes, few sec
+                                                 Video: 10kbps - 5Mbps
+Interactive games        Loss-tolerant           kbps - Mbps                   Yes, 0-80 ms
+Instant messaging        Loss-tolerant           Elastic                       Yes
+
+
+----- HTTP DASH -----
+
+TCP -> HTTP DASH (Dynamic Adaptive Streaming over HTTP): è un protocollo che serve per lo streaming. Il server divide il video in segmenti (chunk, lunghi 30sec/1min) 
+e li mette in una lista di riproduzione. Il client scarica il segmento e lo riproduce. Il client può cambiare la qualità del video in base alla banda che si ha.
+(es Youtube, Netflix ecc).
+
+----- TCP (Cosa c'è sotto il cofano) -----
+
+Diagramma delle cinque colonne:
+1) Alice App
+2) Alice TCP
+3) L3
+4) Bob TCP
+5) Bob App
+
+- I dati mandati vengono numerati in sequenza (es 1,2,3,4,5 ecc) per rispettare la sequenza e viene fatta byte per byte; 1460 byte massimi per pacchetto. Non 1500
+perchè 40 sono per l'header (MTU, Maximum Transfer Unit).
+- Seq: indica da quale byte ci servono i dati.
+- Ack: fino a quale byte i dati sono arrivati integri.
+- Len indica la lunghezza (se 0, non c'è payload).
+
+Protocollo Stop & Wait: è un protocollo che ha l'obiettivo di garantire l'affidabilità. Il mittente invia un pacchetto e aspetta l'ack dal destinatario. 
+Quando viene inviato un pacchetto parte un "cronometro" che avrà un range maggiore del RTT medio. Se il cronometro scade e non ha ricevuto nessun ack, il mittente 
+reinvia il pacchetto. 
