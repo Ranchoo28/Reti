@@ -486,7 +486,26 @@ perchè 40 sono per l'header (MTU, Maximum Transfer Unit).
 - Seq: indica da quale byte ci servono i dati.
 - Ack: fino a quale byte i dati sono arrivati integri.
 - Len indica la lunghezza (se 0, non c'è payload).
+- Win indica la dimensione della finestra di ricezione (quanti byte può ricevere il destinatario).
 
 Protocollo Stop & Wait: è un protocollo che ha l'obiettivo di garantire l'affidabilità. Il mittente invia un pacchetto e aspetta l'ack dal destinatario. 
 Quando viene inviato un pacchetto parte un "cronometro" che avrà un range maggiore del RTT medio. Se il cronometro scade e non ha ricevuto nessun ack, il mittente 
 reinvia il pacchetto. 
+
+------------------------ LEZIONE 14 - 02/11/2023 -----------------------
+
+Tcp struttura del segmento:
+- Porta di sorgente
+- Porta di destinazione
+- Seq: indica da quale byte ci servono i dati.
+- Ack: fino a quale byte i dati sono arrivati integri.
+- Len indica la lunghezza (se 0, non c'è payload).
+- Receive window (rwnd): indica quanti byte può ricevere il destinatario.
+- Checksum: per verificare che il pacchetto non sia stato modificato.
+- Urgent pointer: indica che il pacchetto è urgente.
+- Options: opzioni aggiuntive (es timestamp, window scaling ecc)
+- Application data (payload)
+
+Controllo di congestione: è un meccanismo che serve per evitare che la rete si intasi e si blocchi (es quando si scarica un file, la rete si intasa e non si riesce
+a navigare). Una rete congestionata porta packet loss.
+- Slow Start: si parte con una finestra di 1 MTU (Maximum Transfer Unit) e pian piano si aumenta la finestra di recezione di 1 MTU ogni RTT.
