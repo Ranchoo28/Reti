@@ -509,3 +509,43 @@ Tcp struttura del segmento:
 Controllo di congestione: è un meccanismo che serve per evitare che la rete si intasi e si blocchi (es quando si scarica un file, la rete si intasa e non si riesce
 a navigare). Una rete congestionata porta packet loss.
 - Slow Start: si parte con una finestra di 1 MTU (Maximum Transfer Unit) e pian piano si aumenta la finestra di recezione di 1 MTU ogni RTT.
+
+------------------------ LEZIONE 15 - 07/11/2023 -----------------------
+
+----- NETWORK LAYER -----
+
+Modello di servizio: Che caratteristiche fornisce questo strato al livello superiore? 
+La "lingua" di L3 è l'IP
+
+L'IP è un protocollo di tipo best effort, ovvero non garantisce niente. L'IP è un protocollo di tipo connectionless, ovvero non c'è nessuna 
+connessione tra i due host. 
+I protocolli di routing sono regole o standard che determinano come i router comunicano tra loro, diffondendo le informazioni che consentono 
+loro di selezionare percorsi tra qualsiasi due nodi su una rete di computer. Alcuni esempi di protocolli di routing includono OSPF (Open Shortest Path First), 
+EIGRP (Enhanced Interior Gateway Routing Protocol), BGP (Border Gateway Protocol) e RIP (Routing Information Protocol).
+
+Formato di un datagramma:
+- Versione: indica la versione dell'IP (es IPv4, IPv6)
+- IHL (Internet Header Length): indica la lunghezza dell'header (min 20 byte, max 60 byte)
+- Type of Service: indica il tipo di servizio (es best effort, streaming ecc)
+- Total Length: indica la lunghezza totale del datagramma (header + payload)
+- Identification: indica l'identificativo del datagramma (per il frammentamento)
+- Flags: indica se il datagramma è frammentato o no
+- Fragment Offset: indica l'offset del frammento
+- Time to Live: indica il numero di router che il datagramma può attraversare prima di essere scartato
+- Protocol: indica il protocollo di livello superiore (es TCP, UDP ecc)
+- Header Checksum: indica il checksum dell'header
+- Source Address: indica l'indirizzo IP del mittente
+- Destination Address: indica l'indirizzo IP del destinatario
+- Options: opzioni aggiuntive (es timestamp, window scaling ecc)
+- Padding: padding per allineare l'header a 32 bit
+- Payload: dati del livello superiore
+
+Iana (Internet Authority for Name Assignment): si occupa di assegnare di assegnare indirizzi Ip pubblici, DNS.
+
+TimeToLive: è un campo nel datagramma IP che indica il numero massimo di router (o hop) che il datagramma può attraversare prima di essere scartato. Ogni volta che 
+un router riceve un datagramma, decrementa il valore del TTL di 1. Se il TTL raggiunge 0 il datagramma viene scartato. Questo meccanismo previene il circolo infinito 
+di datagrammi nella rete.
+
+(Domanda tonsilla) comando ping: serve a vedere se lo strato L3 dell'host da pingare per vedere se è vivo e vegeto ed è raggiungibile. Il ping veicola i dati attraverso
+il protocollo ICMP (Internet Controllo Message Protocol). 
+Trace Routing: Elenco dei nodi per vedere come arrivare all'host iniziale.
