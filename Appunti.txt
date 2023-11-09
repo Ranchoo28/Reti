@@ -548,4 +548,31 @@ di datagrammi nella rete.
 
 (Domanda tonsilla) comando ping: serve a vedere se lo strato L3 dell'host da pingare per vedere se è vivo e vegeto ed è raggiungibile. Il ping veicola i dati attraverso
 il protocollo ICMP (Internet Controllo Message Protocol). 
-Trace Routing: Elenco dei nodi per vedere come arrivare all'host iniziale.
+
+Trace Routing: Elenco dei nodi per vedere come arrivare all'host iniziale. Per capire l'elenco dei nodi viene sfruttato il ping, che nel caso di errore ritorna un 
+pacchetto specifico a chi ha effettuato il ping e quindi si può capire chi è il prossimo hop. PingPlotter sfrutta questo metodo.
+
+
+------------------------ LEZIONE 16 - 09/11/2023 -----------------------
+
+DHCP (Dynamic Host Configuration Protocol) è un protocollo di rete che consente a un server di assegnare automaticamente un indirizzo IP a 
+un dispositivo in rete. Questo processo avviene ogni volta che un dispositivo si connette alla rete, permettendo una gestione efficiente 
+degli indirizzi IP all'interno di una rete. L'IP avrà validità limitata nel tempo. Non avendo l'host ancora un IP valido. DHCP usa indirizzi
+IP anonimi (0.0.0.0). Le stazioni vengono identificate con l'indirizzo L2 (MAC Address). Nel DHCP la porta sorgente è sempre la 68. Inoltre anche i nostri router
+fungono da DHCP Client verso il nostro ISP. Per questo ogni volta che lo riavviamo cambia IP; questo perchè riavviando il router fa una DHCP Requet all'ISP.
+Solitamente il DHCP ha un lising, ovvero ogni quanto deve cambiare gli IP. Nelle case è di circa 24h, in posti pubblici solitamente il lising è molto basso.
+
+DHCP Spoofing: qualcuno che cerca di entrare col vero DHCP server per offrire parametri diversi.
+DHCP Flooding: intasare il DHCP server con reti finte.
+
+Gateway: indica il primo hop da fare prima di andare sulla rete esterna. Solitamente nelle reti di casa corrisponde all'IP del router.
+
+// netsh -> comando per shell di windows per cambiare i paramentri di confifurazione della rete.
+
+Subnet: servono a identificare le reti per gruppi gerarchici. Esistono 3 tipi di classi:
+- Ex Classe A (Maschera 8): Subnet 10.x.x.x, maschera implicita: 255.0.0.0  -> 10.0.0.4/8
+- Ex Classe B (Maschera 16): Subnet 191.100.x.x, maschera implicita: 255.255.0.0 -> 191.100.0.4/16
+- Ex Classe C (Maschera 24): Subnet 192.168.2.x, maschera implicita 255.255.255.0 -> 192.168.2.6/24
+
+La subnet indica quandi byte possiamo sfruttare (Indica cos'è prefisso e cosa no). I 255 sono tutti 1 (in binario).
+Ad un certo punto è stato necessario poter suddividere meglio le classi. Es con 300 client, la C era poco e la B era troppo.
