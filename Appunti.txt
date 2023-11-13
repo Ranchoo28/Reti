@@ -576,3 +576,20 @@ Subnet: servono a identificare le reti per gruppi gerarchici. Esistono 3 tipi di
 
 La subnet indica quandi byte possiamo sfruttare (Indica cos'è prefisso e cosa no). I 255 sono tutti 1 (in binario).
 Ad un certo punto è stato necessario poter suddividere meglio le classi. Es con 300 client, la C era poco e la B era troppo.
+
+
+------------------------ LEZIONE 17 - 13/11/2023 -----------------------
+
+----- COME LEGGERE TABELLE DI ROUTING -----
+
+Sia gli endpoint che gli host hanno una tabella di routing.
+Wild card: tutto ciò che si trova fuori maschera, ovvero tutti i bit rimanenti (es 0.0.15.255).
+L'indirizzo 0 di qualsiasi subnet non si può usare, secondo il documento RFC (e non solo). Stessa cosa per l'ultimo IP disponibile dato che serve come broadcast.
+La tabella di routing è composta da due elementi principali (route print da la tabella di routing):
+- Indirizzo di rete: indica l'indirizzo di rete della subnet.
+- Next Hop (Gateway): indica il prossimo hop da fare per raggiungere il traffico esterno.
+
+La tabella ha 5 colonne: IF la prima colonna (ip) è applicabile all seconda (subnet), THEN il datagramma deve andare prima dal gateway e poi dalla interfacce.
+On-link su Gateway: vuol dire che non c'è bisogno di appoggiarsi ad un gateway dato che è un tuo vicino diretto.
+Nel caso di più rotte vince la maschera più specifica (con più 1). In caso di maschere uguali si usa la metrica (ovvero quanto è "lontana") più bassa. Se anche la metrica
+è uguale bisogna vedere il kernel come si comporta in questi casi.
