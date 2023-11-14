@@ -593,3 +593,22 @@ La tabella ha 5 colonne: IF la prima colonna (ip) è applicabile all seconda (su
 On-link su Gateway: vuol dire che non c'è bisogno di appoggiarsi ad un gateway dato che è un tuo vicino diretto.
 Nel caso di più rotte vince la maschera più specifica (con più 1). In caso di maschere uguali si usa la metrica (ovvero quanto è "lontana") più bassa. Se anche la metrica
 è uguale bisogna vedere il kernel come si comporta in questi casi.
+
+
+------------------------ LEZIONE 18 - 14/11/2023 -----------------------
+
+192.168.0.0/16 - 172.16.0.0/12 -> Sono indirizzi riservati a reti locali. Impossibile usarli pubblicamente.  
+224.0.0.0/4 -> conversazione multicast (Protocollo IGMP)
+
+----- NAT -----
+NAT (Network Address Translation): è un meccanismo che serve per tradurre gli indirizzi IP. Serve a mitigare il problema legato al
+numero di IP di IPv4.
+Tutti i datagrammi in uscita dalla rete locale hanno lo stesso indirizzo sorgente NAT: 138.76.29.7, ma possono avere numeri differenti di porta
+sorgente differenti.
+Per esempio l'IP locale 10.0.0.1, 3345 diventa grazie al NAT 138.76.29.7, 5001. Tutti queste traduzioni vengono messe nel NAT translation table.
+
+Problemi che porta il NAT:
+- I server interni non sono pingabili dall'esterno. Il Port forwarding risolve questo problema. Il router possiede la tabella che si chiama
+Port forwarding, dove all'interno si può settare manualmente ip e porta in modo da averle statiche ed avere sempre le stesse.
+
+DYN DNS (Dns dinamico): si registra un dns proprio che è collegate al ip dinamico del NAT che ci viene assegnato. (es DYN DNS agent)
