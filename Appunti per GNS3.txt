@@ -1,0 +1,18 @@
+sysctl -w net-ipv4_forward=1
+
+pico /etc/network/interfaces
+commentare la riga del dhcp
+
+----- farlo per tutte le interfacce ----- 
+auto eth0
+iface eth0 inet static
+network 10.0.0.0/24
+netmask 255.255.255.0
+broadcast 10.0.0.255
+address 10.0.0.x
+
+per applicare le modifiche:
+- riavviare servizio di rete -> service networking restart
+- riavviare la vm
+
+Il broadcast deve essere sempre dispari, se pari è sbagliata.

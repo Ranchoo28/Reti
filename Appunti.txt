@@ -515,7 +515,7 @@ a navigare). Una rete congestionata porta packet loss.
 ----- NETWORK LAYER -----
 
 Modello di servizio: Che caratteristiche fornisce questo strato al livello superiore? 
-La "lingua" di L3 è l'IP
+La "lingua" di L3 è l'IP3
 
 L'IP è un protocollo di tipo best effort, ovvero non garantisce niente. L'IP è un protocollo di tipo connectionless, ovvero non c'è nessuna 
 connessione tra i due host. 
@@ -612,3 +612,23 @@ Problemi che porta il NAT:
 Port forwarding, dove all'interno si può settare manualmente ip e porta in modo da averle statiche ed avere sempre le stesse.
 
 DYN DNS (Dns dinamico): si registra un dns proprio che è collegate al ip dinamico del NAT che ci viene assegnato. (es DYN DNS agent)
+
+
+------------------------ LEZIONE 19 - 16/11/2023 -----------------------
+
+A livello link le interfacce di rete ricevono e mandano solo ad altre interfacce sullo stesso link (quindi i neighbour).
+arp -a -> stampa una tabella dove ci sono tutti i vicini. (Arp -> Address Resolution Protocol)
+
+Quando le rotte non sono locali bisogna usare il Gateway, che DEVE essere neighbour.
+La rotta locale invece si applica nel momento in cui il destinatario è nella stessa subnet. Qui i datagrammi vengono incapsulati in un frame Ethernet; per prendere il 
+MAC address del destinatario va a vedere nella arp table.
+All'interno del frame troviamo:
+- Preamble: 7 bytes con pattern 10101010 
+- Dest address
+- Source address
+- Type
+- Payload
+- CRC
+
+// il MAC address ff:ff:ff:ff:ff:ff è un MAC broadcast.
+// Arp poisoning: è un problema molto grande da risolvere e facile da eseguire che serve a sostituire un altro ARP.
