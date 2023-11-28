@@ -16,3 +16,7 @@ per applicare le modifiche:
 - riavviare la vm
 
 Il broadcast deve essere sempre dispari, se pari è sbagliata.
+
+La rotta del TAP matcha tutti i pacchetti che specificano gli ip del link del TAP. Quindi per farlo inviare su internet bisogna mettere 0.0.0.0, dato che non sarà 
+nessuno ip della nostra rete.
+post-up route add default gw 10.0.7.5 dev eth0

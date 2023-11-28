@@ -632,3 +632,166 @@ All'interno del frame troviamo:
 
 // il MAC address ff:ff:ff:ff:ff:ff è un MAC broadcast.
 // Arp poisoning: è un problema molto grande da risolvere e facile da eseguire che serve a sostituire un altro ARP.
+
+------------------------ LEZIONE 20 - 23/11/2023 -----------------------
+
+Area green (LAN):
+- area libera per gli utenti finali
+- tutti possono comunicare con tutti e possono accedere a dei servizi
+- protetto da Firewall
+
+Area red:
+- servizi accessibili solo dall'area green
+- semi esposizione dei servizi
+
+Area DMZ:
+- delimitatori red zone
+- rete completamente esposta in remoto
+- tutti possono accedere ai servizi (es pagina web)
+
+Area INET:
+- domini di conclusione
+- rete internet
+
+Divisione domini di collisione:
+Red -> CD6 e CD7
+Green -> CD1
+DMZ -> CD8 e CD9
+
+CD2, CD4, CD5, TAP
+
+CD1 -> 133 -> 2^x - 2 >= 133 = 8 -> 32 - 8 = 24, 255.255.255.0
+CD2 -> 2 -> 30 -> 255.255.255.251
+CD4 -> 2 -> 30
+CD5 -> 2 -> 30
+CD6 -> 176 -> 24
+CD7 -> 363 -> 23
+CD8 -> 239 -> 24
+CD9 -> 105 -> 25
+CDTAP -> 2 -> 30
+
+Assegnare sempre la maschera più piccola disponibile (se abbiamo 133, usare per esempio maschera 24, quindi 255). Questo dipende anche da 
+specifiche aziendali.
+Le maschere partono da 32, ovvero 1; si prosegue poi a multipli di 2 (es 30 = 3, 24 = 256, 25 = 128, 26 = 64)
+
+Per modificare una rete:
+- rifare da capo
+- nattare uno specifico ip in modo da creare un ulteriore sottorete e quindi avere più ip disponibili da sfruttare.
+
+Ordinarli sempre in modo crescente per il numero della maschera.
+RED: 22
+- CD7 23
+1) Network: 10.0.0.0/23
+2) Netmask: 11111111.11111111.11111110.00000000 -> 255.255.254.0
+3) Broadcast: 10.0.1.255
+    Come calcolare il broadcast:
+        1) Trasformare l'ip del network in binario: 00001010.00000000.00000000.00000000 
+        2) Invertire 1 e 0 della mschera:           00000000.00000000.00000001.11111111
+        3) Effettuare OR:                           00001010.00000000.00000001.11111111 -> 10.0.1.255
+
+- CD6 24
+1) Network: 10.0.2.0/24
+2) Netmask: 255.255.255.0
+3) Broadcast: 10.0.2.255
+
+
+DMZ: 23
+- CD8 24
+- CD9 25
+
+GREEN: 24
+- CD1 24
+
+Come accorpare più reti:
+- se sono esattamente due domini, la maschera sarà la più piccola - 1
+- se sono più di due domini, bisogna disegnare un albero. Si parte dai nodi foglia (che sono i vari CD) e si scrive in quale maschera possono
+entrare. Accanto 
+
+Area Black:
+CD101 24
+CD102 24
+CD103 25
+CD104 27
+
+------------------------ LEZIONE 21 - 28/11/2023 -----------------------
+
+Come debugare una rete:
+- ping -> utilizzato principalmente per verifocare la presenza e la raggiungibilità di un altro pc connesso in rete.
+- if/ip config -> Mostra e modifica importanti sulle interfacce di rete disponibili.
+- netstat -> visualizza lo stato delle connessioni instaurate sul computer locale
+- telnet <host> <port> -> fornisce all'utente sessioni di login remoto tra host su internet (solo client). Può comunicare con molti protocolli. 
+- netcat -> fornisce all'utente sessioni di login remoto tra host su internet (sia client che server). Può comunicare con molti protocolli-
+- Wireshark 
+- ethtool
+- dig / nslookup -> risolve un dominio o ip
+- iperf -> 
+- tcpdump -> wireshark senza interfaccia grafica
+- route
+- traceroute
+- arp
+- iftop
+- iptables
+
+----- PING -----
+ping <ip> -> pinga un ip
+ping -t <ip> -> pinga un ip in continuazione
+ping -a <ip> -> pinga un ip e cerca di risalire al nome del pc
+ping -n <numero> <ip> -> pinga un ip per un numero di volte specificato
+ping -l <numero> <ip> -> pinga un ip con un numero di byte specificato
+ping -f <ip> -> pinga un ip con un pacchetto di byte massimo
+ping -r <numero> <ip> -> pinga un ip con un numero di byte specificato e mostra il percorso
+ping -c <ip> (su linux) -> pinga un ip con un numero di byte specificato e mostra il percorso
+
+Come output ci da:
+PING 
+rrt min/avg/max/mdev
+
+messaggi di errori:
+- destination unreacheable: impossibile raggiungere quell'ip, quindi ci sarà un problema legato alle rotte.
+
+----- IFCONFIG -----
+ifconfig -> mostra le interfacce di rete
+ifconfig <nome interfaccia> -> mostra le informazioni di una specifica interfaccia di rete
+ifconfig -a -> mostra tutte le interfacce di rete
+ifconfig <nome interfaccia> up -> accende una interfaccia
+ifconfig <nome interfaccia> down -> spegne una interfaccia
+
+----- IP -----
+ip a (o addr) -> mostra le interfacce di rete sia accese che spente
+ip  a show <interfaccia> -> mostra l'interfaccia di rete specificata
+ip a add <ip/mask> <interfaccia> -> setta l'ip alla interfaccia scelta
+
+----- NETSTAT -----
+netstat -> mostra le connessioni attive
+netstat -tupan -> tcp, udp, protocol, all
+
+netstat -tupan | grep ESTABLISHED -> mostra solo le connessioni le connessioni ESTABLISHED
+
+ss -> nuova versione di netstat
+
+----- TELNET -----
+Ovviamente bisogna sapere il linguaggio del protocollo che si va ad usare
+telnet <ip> <port> -> si connette ad un ip e porta specificato
+
+----- NETCAT -----
+nc -l <port> -> si mette in ascolto su una porta
+nc <ip> <port> -> si connette ad un ip e porta specificato
+
+----- NSLOOKUP -----
+nslookup <dominio> -> risolve un dominio in un ip (query di tipo A)
+nslookup <ip> -> risolve un ip in un dominio
+nslookup -type=MX (mail exchanger) mat.unical.it
+
+----- IPERF -----
+iperf -s -> si mette in ascolto su una porta (avvia il server)
+iperf -c <ip> -> si connette ad un ip e porta specificato (client)
+iperf -c <ip> -u -> si connette ad un ip e porta specificato (client) con UDP
+iperf -c <ip> -u -b <bandwidth> -> si connette ad un ip e porta specificato (client) con UDP e specifica la banda
+
+----- TCPDUMP -----
+tcpdump -> mostra i pacchetti che passano per una interfaccia di rete
+tcpdump -i <interfaccia> -> mostra i pacchetti che passano per una interfaccia di rete specificata
+tcpdump -i <interfaccia> -n -> mostra i pacchetti che passano per una interfaccia di rete specificata e mostra gli ip
+tcpdump -i <interfaccia> -n -X -> mostra i pacchetti che passano per una interfaccia di rete specificata e mostra gli ip e il payload
+tcpdump <port> -> mostra i pacchetti che arrivano o partono da una porta specificata
+tcpdump <protocollo> -> moistra i pacchetti che sfruttano il protocollo selezionato 
