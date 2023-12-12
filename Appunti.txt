@@ -628,10 +628,10 @@ All'interno del frame troviamo:
 - Source address
 - Type
 - Payload
-- CRC
+- CRC (Cyclic Redundancy Check, funziona come le checksum)
 
 // il MAC address ff:ff:ff:ff:ff:ff è un MAC broadcast.
-// Arp poisoning: è un problema molto grande da risolvere e facile da eseguire che serve a sostituire un altro ARP.
+// Arp spoofing: è un problema molto grande da risolvere e facile da eseguire che serve a sostituire un altro ARP.
 
 ------------------------ LEZIONE 20 - 23/11/2023 -----------------------
 
@@ -795,3 +795,118 @@ tcpdump -i <interfaccia> -n -> mostra i pacchetti che passano per una interfacci
 tcpdump -i <interfaccia> -n -X -> mostra i pacchetti che passano per una interfaccia di rete specificata e mostra gli ip e il payload
 tcpdump <port> -> mostra i pacchetti che arrivano o partono da una porta specificata
 tcpdump <protocollo> -> moistra i pacchetti che sfruttano il protocollo selezionato 
+
+------------------------ LEZIONE 22 - 30/11/2023 -----------------------
+
+----- ROUTE -----
+route -> mostra la tabella di routing
+route -n -> mostra la tabella di routing con gli ip
+route -e -> mostra la tabella di routing con gli ip numerici
+route add default gw <ip> -> aggiunge una rotta di default
+
+----- TRACEROUTE -----
+traceroute <ip> -> mostra il percorso che fa un pacchetto per arrivare ad un ip
+
+Ad ogni pacchetto viene assegnato un contatore. Ad ogni hop il contatore viene decrementato di 1. Grazie all'ack sappiamo ad ogni hop dove si 
+trovava il pacchetto. Se l'output da ***, vuol dire che c'è un firewall che blocca il pacchetto, ** e * quando si hanno problemi di rete.sa
+
+----- ARP -----
+arp -> mostra la arp table dell'host corrente
+arp -n -> mostra la arp table senza risolvere gli hostname
+arp -s <hostname> -> aggiunge una static entry
+arp -d <hostname> -> elimina una static entry
+
+Output:
+Address HWType HWaddress Flags Mask IFace (linux)
+
+----- IFTOP -----
+iftop -> mostra il traffico che passa per una interfaccia di rete
+iftop -i <interfaccia> -> mostra il traffico che passa per una interfaccia di rete specificata
+iftop -p -> mostra l'uso della banda in modalità promiscouos modem
+iftop -nN -> mostra l'uso della banda senza risolvere gli hostname e porte
+
+------------------------ LEZIONE 23 - 04/12/2023 -----------------------
+
+----- LINK LAYER -----
+Collisione: quando ci sono due trasmissioni contemporanee sullo stesso link
+
+Ci sono 3 tipidi di protocolli di condivisione:
+1) Suddivisioni del canale (es cellulari GSM)
+- a slot di tempo, di frequenza ecc
+- il problema è risolto a livello 1
+2) Protocolli ad accesso casuale (Ethernet)
+- Presenza di collisioni
+- C'è un meccanisco per sopportare le collisioni
+3) Protocolli a turni (es token ring)
+- Ognuno trasmette a turno, quando possiede il boccino (token).
+
+----- CSMA/CD -----
+CSMA (Carrier Sense Multiple Access): si sta in ascolto prima di trasmettere (Carrier Sense). Se si vede che il canale è silenzioso si trasmette tutto 
+il frame. Se è occupato si ritarda la trasmissione.
+
+CD (Collision Detect): rileva le collisioni. Se capisce che i. dato viene sporcato da qualcun altro, allora si ritenta seguendo uno schema particolare. La 
+prima volta la schede sceglie fra 0 e 1. Se esce 0, allora ritrasmette subito; con 1 invece aspetti 512 bit. Ogni volta si aggiunge un numero (es k = {0,1,2}) e 
+in base al numero che si trova, si aspetta 512 * k. Dopo 10 tentativi il pacchetto viene buttato, quindi si ha packet loss.
+
+Questo tipo di Ethernet è molto vecchia. Ora si sfrutta la tipologia a stella, dove al centro si ha un hub o uno switch. Con le Hub, quando arriva un frame viene 
+ripetuto su tutte le porte. L'hub inoltre non rileva le connessioni.
+Gli switch invece hanno all'interno una switch table (solo gli switch ce l'hanno a bordo). Risolvono il problema delle collisioni. 
+Possono essere di due tipi:
+- unmanaged: sono già pronti all'utilizzato
+- managed: all'interno hanno un'interfaccia modificabile a proprio piacimento.
+Ad ogni riga della table abbiamo l'accoppiamento indirizzo MAC e porta che inizialmente è vuota, ma che col tempo viene riempita in base alle informazioni che lo switch
+acquisisce col passare dei frame. Quando lo switch non conosce un mac si comporta esattamente come un hub, ripetendo il segnale su tutti gli host (tranne chi lo ha mandato).
+
+Gli switch garantiscono riservatezza e confidenzialità? NO, ELIMINA SOLO IL PROBLEMA DELL'HUB. (Domanda esame)
+Uno switch può essere diviso virtualmente tramite VLAN (Virtual LAN, Standard 802.1Q)
+
+----- WIFI -----
+Il wifi è un protocollo di tipo CSMA/CA (Carrier Sense Multiple Access with Collision Avoidance). La differenza con il CSMA/CD è che non si può rilevare le collisioni.
+IEEE 802.11 -> Accesso multiplo
+
+802.11 Sender:
+1) Se percepisce il canale muto per DIFS tempo allora trasmette il frame per intero (senza CD)
+2) Se il canale percepito è occupato, allora avvia il timer di backoff random e trasmette alla scadenza del timer. Se nessun ACK, radoppia il rane di backoff minimo e 
+si ripete 
+
+802.11 Receiver:
+1) Se il frame arriva per intero con CRC valido, allora invia un ACK dopo SIFS tempo.
+
+------------------------ LEZIONE 24 - 05/12/2023 -----------------------
+RTS/CTS -> Prima chiedi di trasmettere, poi trasmetti. 
+Il mittente invia prima un pacchetto RTS al ricevitore per segnalare la sua intenzione di trasmettere dati. Il ricevitore risponde con un 
+pacchetto CTS per indicare che è pronto a ricevere i dati. Questo processo aiuta a minimizzare le collisioni di pacchetti su una rete wireless.
+
+RTS (Request To Send): È un pacchetto inviato da un dispositivo mittente per segnalare la sua intenzione di trasmettere dati. Questo 
+pacchetto è inviato prima della trasmissione dei dati effettivi per assicurarsi che il canale di comunicazione sia libero e che il 
+dispositivo ricevente sia pronto per ricevere i dati.
+
+CTS (Clear to Send): È un pacchetto inviato da un ricevitore per dare il permesso al mittente di trasmettere un pacchetto di dati. È una 
+parte del meccanismo RTS/CTS utilizzato nelle reti wireless per ridurre le collisioni introdotte dal "problema del terminale nascosto".
+
+----- ENCODING -----
+La codifica binaria è un sistema di rappresentazione dei dati che utilizza solo due simboli, generalmente 0 e 1. Questi due simboli 
+rappresentano gli stati "on" e "off" di un bit, che è l'unità di base dell'informazione in informatica e nella teoria dell'informazione.
+Stringhe ripetute lunghissime (es tanti 0 e/o 1) possono dare problemi di lettura da parte del clock.
+Queso tipo di encoding è molto impreciso perchè col passare dei bit il clock si disallineerà inevitabilmente. Problema risolto dall'econding
+di Manchester.
+
+L'encoding di Manchester è un metodo di codifica di segnali digitali che consente la sincronizzazione del clock del ricevitore con i dati in 
+arrivo. Questo metodo è utilizzato in diverse forme di comunicazione, tra cui alcune versioni di Ethernet.
+Nell'encoding di Manchester, ogni bit di dati è diviso in due periodi di clock. Un bit "0" è rappresentato da una transizione da alto a basso 
+a metà del periodo del bit, mentre un bit "1" è rappresentato da una transizione da basso ad alto a metà del periodo del bit. Questo significa
+che c'è sempre una transizione di tensione a metà di ogni bit, permettendo al ricevitore di sincronizzarsi con il mittente.
+Per rappresentare lo 0, il cavo va a +5 a -5 volt. Per l'1 invece da -5 a +5 volt. Minore sarà il tempo in cui dura il segnale, maggiore sarà la
+velocità di trasmissione. Tutt'ora questo encoding viene utilizzato.
+
+----- MODULAZIONE -----
+Un modem (modulatore-demodulatore) è un dispositivo che converte i dati digitali del computer in un segnale analogico che può essere 
+trasmesso su linee telefoniche o via cavo, e viceversa. Questo processo di conversione è chiamato modulazione e demodulazione.
+
+La modulazione è il processo di variazione di una o più proprietà di un'onda portante (sinusoide) in base ai dati che devono essere 
+trasmessi. Queste proprietà possono essere l'ampiezza (AM, Amplitude Modulation), la frequenza (FM, Frequency Modulation) o la fase 
+(PM, Phase Modulation).
+Nel caso della modulazione di ampiezza (AM), l'ampiezza dell'onda sinusoide varia in base ai dati. Nel caso della modulazione di frequenza (FM),
+la frequenza dell'onda sinusoide varia in base ai dati. Nella modulazione di fase (PM), la fase dell'onda sinusoide varia in base ai dati.
+Una volta che il segnale raggiunge il modem del ricevente, il processo di demodulazione converte il segnale analogico di nuovo in dati digitali
+che il computer può comprendere.
